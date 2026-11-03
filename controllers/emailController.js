@@ -3,6 +3,7 @@ import { catchAsync } from '../utils/commonFunctions.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { AppError } from '../utils/AppError.js';
 export const sendEmail = catchAsync(async (req, res, next) => {
 
   const { to, action } = req.body;
@@ -40,7 +41,7 @@ export const sendEmail = catchAsync(async (req, res, next) => {
           sendMailWithRetry();
         } else {
           console.log('Max attempts reached. Email not sent.');
-          res.status(500).json({ message: 'Error sending email', error: error.message });
+          next(new AppError('Error sending email', 502, { cause: error }));
         }
       } else {
         console.log('Email sent: ' + info.response);

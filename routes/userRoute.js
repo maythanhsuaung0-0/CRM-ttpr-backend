@@ -13,7 +13,6 @@ UserRouter.get('/getRegisteredStaffs',checkToken,getRegisteredStaffs)
 UserRouter.get('/getVerifiedStaffs',checkToken,getVerifiedStaffs)
 UserRouter.get('/getStudents',checkToken,getStudents)
 UserRouter.get('/getPendingStaffs',checkToken,getPendingStaffs)
-UserRouter.get('/getPendingStaffs',checkToken,getPendingStaffs)
 UserRouter.get('/getMatrix',checkToken,matrix)
 UserRouter.patch('/actionPendingStaff/:id',checkToken,actionPendingStaff)
 export default UserRouter;

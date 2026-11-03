@@ -5,6 +5,7 @@ import Industry from '../models/industry.js'
 import Department from '../models/department.js';
 import Position from '../models/Position.js'
 import { catchAsync } from '../utils/commonFunctions.js'
+import { AppError } from '../utils/AppError.js'
 
 
 
@@ -30,13 +31,8 @@ export const createCompany = catchAsync(async (req, res, next) => {
   }
 })
 export const companyMatrix= catchAsync(async (req, res, next) => {
-  try{
   const totalCompanies = await Company.countDocuments();
   res.status(200).json({companyCount:totalCompanies})
-  }
-  catch(error){
-    console.log(error,'lol')
-  }
 })
 
 export const createManyCompanies = catchAsync(async (req, res, next) => {
@@ -86,14 +82,8 @@ export const createManyCompanies = catchAsync(async (req, res, next) => {
     }
     
   }
-  try {
-    const result= await Company.insertMany(companies, { ordered: false })
-    res.status(200).json(result)
-  }
-  catch (error) {
-    console.log(error)
-    res.status(500).json({ message: 'Error inserting companies', error } )
-  }
+  const result= await Company.insertMany(companies, { ordered: false })
+  res.status(200).json(result)
 }
 )
 export const getCompanies = catchAsync(async (req, res, next) => {
@@ -131,7 +121,7 @@ export const updateCompany = catchAsync(async (req, res, next) => {
   );
 
   if (!company) {
-    res.status(404).json({ message: "No company found with that ID" })
+    return next(new AppError('No company found with that ID', 404))
   }
 
   res.status(200).json(company);
@@ -142,7 +132,7 @@ export const deleteCompany = catchAsync(async (req, res, next) => {
   console.log('deleting', req.params.id)
   const company = await Company.findByIdAndDelete(req.params.id)
   if (!company) {
-    res.status(404).json({ message: "No company found with that ID" })
+    return next(new AppError('No company found with that ID', 404))
   }
 
   res.status(200).json({ message: "deleted successfully" })

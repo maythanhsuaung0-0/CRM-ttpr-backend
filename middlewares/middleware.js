@@ -1,25 +1,23 @@
 import jwt from 'jsonwebtoken'
+import { ACCESS_COOKIE_NAME, verifyAccessToken } from '../utils/authSecurity.js'
+
 export const checkToken = (req, res, next) => {
-  const currentTimestamp = Math.floor(Date.now() / 1000);
-  const token = req.headers.authorization && req.headers.authorization.split(' ')[1]
-  if (!token) { return res.status(401).json({ message: "Login first" }) }
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY, {
-    ignoreExpiration: true
-  }, (err, decoded) => {
-    if (err) {
-      return res.status(403).json({ message: err.message })
+  const authorization = req.headers.authorization
+  const bearerToken = authorization?.startsWith('Bearer ') ? authorization.slice(7).trim() : null
+  const token = bearerToken || req.cookies?.[ACCESS_COOKIE_NAME]
+
+  if (!token) {
+    return res.status(401).json({ message: 'Authentication required' })
+  }
+
+  try {
+    req.UserData = verifyAccessToken(token)
+    return next()
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ message: 'Access token expired' })
     }
-    if (decoded.exp < currentTimestamp) {
-      res.clearCookie("access_token", {
-        secure: true,
-        path: '/'
-      })
-      res.status(200).json({ message: "Logged out" });
-    }
-    else {
-      req.UserData = decoded
-      next()
-    }
-  })
+    return res.status(401).json({ message: 'Invalid access token' })
+  }
 }
 

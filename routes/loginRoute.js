@@ -3,6 +3,6 @@ import { loginAttempt, logoutAttempt } from "../controllers/loginController.js";
 
 const LoginRouter = Router()
 LoginRouter.post('/login', loginAttempt)
-LoginRouter.get('/logout', logoutAttempt)
+LoginRouter.post('/logout', logoutAttempt)
 export default LoginRouter
 

@@ -2,6 +2,7 @@
 // logic for fetching and posting internship data
 import Internship from '../models/Internship.js'
 import { catchAsync } from '../utils/commonFunctions.js'
+import { AppError } from '../utils/AppError.js'
 
 export const createInternship = catchAsync(async(req, res, next) => {
   // check if internship with same position at same company already exists

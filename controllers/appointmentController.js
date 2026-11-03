@@ -1,7 +1,8 @@
 import Appointment from '../models/appointment.js';
+import { AppError } from '../utils/AppError.js';
 
 // Create appointment
-export const createAppointment = async (req, res) => {
+export const createAppointment = async (req, res, next) => {
   console.log('Creating appointment with data:', req.body);
   try {
     const { title, description,date, startTime, endTime, participant, staff, meetingType, location,
@@ -58,17 +59,12 @@ export const createAppointment = async (req, res) => {
       data: appointment
     });
   } catch (error) {
-    console.error('Error creating appointment:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to create appointment',
-      error: error.message
-    });
+    next(new AppError('Failed to create appointment', 500, { cause: error }));
   }
 };
 
 // Get all appointments with optional filtering
-export const getAppointments = async (req, res) => {
+export const getAppointments = async (req, res, next) => {
   try {
     const {
       participant,
@@ -112,17 +108,12 @@ export const getAppointments = async (req, res) => {
       data: appointments
     });
   } catch (error) {
-    console.error('Error fetching appointments:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch appointments',
-      error: error.message
-    });
+    next(new AppError('Failed to fetch appointments', 500, { cause: error }));
   }
 };
 
 // Get single appointment by ID
-export const getAppointment = async (req, res) => {
+export const getAppointment = async (req, res, next) => {
   try {
     const appointment = await Appointment.findById(req.params.id);
 
@@ -138,17 +129,12 @@ export const getAppointment = async (req, res) => {
       data: appointment
     });
   } catch (error) {
-    console.error('Error fetching appointment:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch appointment',
-      error: error.message
-    });
+    next(new AppError('Failed to fetch appointment', 500, { cause: error }));
   }
 };
 
 // Update appointment
-export const updateAppointment = async (req, res) => {
+export const updateAppointment = async (req, res, next) => {
   try {
     const {
       title,
@@ -212,17 +198,12 @@ export const updateAppointment = async (req, res) => {
       data: updatedAppointment
     });
   } catch (error) {
-    console.error('Error updating appointment:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to update appointment',
-      error: error.message
-    });
+    next(new AppError('Failed to update appointment', 500, { cause: error }));
   }
 };
 
 // Delete appointment
-export const deleteAppointment = async (req, res) => {
+export const deleteAppointment = async (req, res, next) => {
   try {
     const appointment = await Appointment.findByIdAndDelete(req.params.id);
 
@@ -239,17 +220,12 @@ export const deleteAppointment = async (req, res) => {
       data: null
     });
   } catch (error) {
-    console.error('Error deleting appointment:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to delete appointment',
-      error: error.message
-    });
+    next(new AppError('Failed to delete appointment', 500, { cause: error }));
   }
 };
 
 // Send invitation
-export const sendInvite = async (req, res) => {
+export const sendInvite = async (req, res, next) => {
   try {
     const appointment = await Appointment.findById(req.params.id);
 
@@ -278,17 +254,12 @@ export const sendInvite = async (req, res) => {
       data: appointment
     });
   } catch (error) {
-    console.error('Error sending invitation:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to send invitation',
-      error: error.message
-    });
+    next(new AppError('Failed to send invitation', 500, { cause: error }));
   }
 };
 
 // Get appointments by student/participant
-export const getStudentAppointments = async (req, res) => {
+export const getStudentAppointments = async (req, res, next) => {
   try {
     const { studentId } = req.params;
     const { status, upcoming } = req.query;
@@ -310,17 +281,12 @@ export const getStudentAppointments = async (req, res) => {
       data: appointments
     });
   } catch (error) {
-    console.error('Error fetching student appointments:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch student appointments',
-      error: error.message
-    });
+    next(new AppError('Failed to fetch student appointments', 500, { cause: error }));
   }
 };
 
 // Get appointments by staff member
-export const getStaffAppointments = async (req, res) => {
+export const getStaffAppointments = async (req, res, next) => {
   try {
     const { staffId } = req.params;
     const { status, date, upcoming } = req.query;
@@ -354,12 +320,7 @@ export const getStaffAppointments = async (req, res) => {
       data: appointments
     });
   } catch (error) {
-    console.error('Error fetching staff appointments:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch staff appointments',
-      error: error.message
-    });
+    next(new AppError('Failed to fetch staff appointments', 500, { cause: error }));
   }
 };
 

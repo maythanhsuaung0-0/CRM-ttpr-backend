@@ -5,6 +5,6 @@ const DepartmentRouter = Router();
 DepartmentRouter.post('/create', createDepartment);
 DepartmentRouter.get('/:id', getDepartmentById);
 DepartmentRouter.get('/', getDepartment);
-DepartmentRouter.post('/update', updateDepartment);
-DepartmentRouter.delete('/delete', deleteDepartment);
+DepartmentRouter.patch('/:id', updateDepartment);
+DepartmentRouter.delete('/:id', deleteDepartment);
 export default DepartmentRouter;
